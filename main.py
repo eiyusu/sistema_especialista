@@ -8,10 +8,10 @@
 #   Duração da Febre            |   4 a 7 dias  |   1 ou 2 dias      |  2 ou 3 dias
 #   Manchas na Pele             |   4º dia      |   1º ou 2º dia     |  2º ao 5º dia
 #   Prob. Manchas               |   0,3 - 0,5   |   0,9 a 1          |  0,5
-#   Frque. Dor Muscular         |   3/3         |   2/3              |  1/3
-#   Frque. Dor Articular        |   1/3         |   2/3              |  3/3
+#   Freq. Dor Muscular          |   3/3         |   2/3              |  1/3
+#   Freq. Dor Articular         |   1/3         |   2/3              |  3/3
 #   Inten. Dor Articular        |   Leve        |   Leve/Moderada    |  Moderada/Intensa
-#   Freque. Edema na Artic.    |   Raro        |   Frequente        |  Frequente
+#   Freq. Edema na Artic.       |   Raro        |   Frequente        |  Frequente
 #   Inten. Endema na Artic.     |   X           |   Leve             |  Moderado/Intenso
 #   Conjuntivite                |   Raro        |   0,5 - 0,9        |  0,3
 #   Dor de cabeça               |   3/3         |   2/3              |  2/3
@@ -21,10 +21,15 @@
 #   Acomet. Neuro.              |   Raro        |   Mais que outros  |  Raro (mais em neonatos)
 
 
+p_dengue = 1/3
+p_zika = 1/3
+p_chikungunya = 1/3
+
+
 class Doencas:
-    def __init__(self, dengue, zyka, chikunguinya):
+    def __init__(self, dengue, zika, chikunguinya):
         self.dengue = dengue
-        self.zyka = zyka
+        self.zika = zika
         self.chikunguinya = chikunguinya
 
 
@@ -68,26 +73,323 @@ def intensidade(sintoma):
 
 # Função do sistema especialista que entregará um resultado a partir das informações coletadas
 def sistema_especialista(febre, grau_febre, tempo_febre, manchas_pele, dia_manchas, dor_muscular,
-                         intensidade_muscular, dor_articulacao, intensidade_articulacao,
+                         dor_articulacao, intensidade_articulacao,
                          edema_articulacao, intensidade_edema, conjuntivite,
                          dor_cabeca, intensidade_cabeca, coceira, intensidade_coceira,
                          hipertrofia_ganglionar, intensidade_hipertrofia, discrasia_hemorragica,
                          intensidade_discrasia, acomentimento_neurologico):
-    resultado = False
+
+    eventos_dengue = []
+    eventos_zika = []
+    eventos_chikungunya = []
+    evento = False
 
     if not febre and not manchas_pele and not dor_muscular and not dor_articulacao and not edema_articulacao and not conjuntivite and not dor_cabeca and not coceira and not hipertrofia_ganglionar and not discrasia_hemorragica and not acomentimento_neurologico:
-        resultado = True
         print('\nProvavelmente, você não está com dengue, zika ou chikunguinya\n')
 
     if febre:
-        trata_febre(grau_febre, tempo_febre)
+        evento = True
+        temperatura = febre_temperatura(grau_febre)
+        duracao_febre = febre_duracao(tempo_febre)
+        eventos_dengue.append(temperatura.dengue)
+        eventos_zika.append(temperatura.zika)
+        eventos_chikungunya.append(temperatura.chikunguinya)
+        eventos_dengue.append(duracao_febre.dengue)
+        eventos_zika.append(duracao_febre.zika)
+        eventos_chikungunya.append(duracao_febre.chikunguinya)
 
-    return resultado
+    if manchas_pele:
+        evento = True
+        mancha_chance = mancha_prob(dia_manchas)
+        eventos_dengue.append(mancha_chance.dengue)
+        eventos_zika.append(mancha_chance.zika)
+        eventos_chikungunya.append(mancha_chance.chikunguinya)
+
+    if dor_muscular:
+        evento = True
+        muscular_chance = muscular_prob()
+        eventos_dengue.append(muscular_chance.dengue)
+        eventos_zika.append(muscular_chance.zika)
+        eventos_chikungunya.append(muscular_chance.chikunguinya)
+
+    if dor_articulacao:
+        evento = True
+        articulacao_chance = articular_prob()
+        articulacao_intensidade = articular_dor(intensidade_articulacao)
+        eventos_dengue.append(articulacao_chance.dengue)
+        eventos_zika.append(articulacao_chance.zika)
+        eventos_chikungunya.append(articulacao_chance.chikunguinya)
+        eventos_dengue.append(articulacao_intensidade.dengue)
+        eventos_zika.append(articulacao_intensidade.zika)
+        eventos_chikungunya.append(articulacao_intensidade.chikunguinya)
+
+    if edema_articulacao:
+        evento = True
+        edema_chance = edema_prob()
+        edema_intensidade = edema_dor(intensidade_edema)
+        eventos_dengue.append(edema_chance.dengue)
+        eventos_zika.append(edema_chance.zika)
+        eventos_chikungunya.append(edema_chance.chikunguinya)
+        eventos_dengue.append(edema_intensidade.dengue)
+        eventos_zika.append(edema_intensidade.zika)
+        eventos_chikungunya.append(edema_intensidade.chikunguinya)
+
+    if conjuntivite:
+        evento = True
+        conjuntivite_chance = conjuntivite_prob()
+        eventos_dengue.append(conjuntivite_chance.dengue)
+        eventos_zika.append(conjuntivite_chance.zika)
+        eventos_chikungunya.append(conjuntivite_chance.chikunguinya)
+
+    if dor_cabeca:
+        evento = True
+        cabeca_chance = cabeca_prob()
+        cabeca_intensidade = cabeca_dor(intensidade_cabeca)
+        eventos_dengue.append(cabeca_chance.dengue)
+        eventos_zika.append(cabeca_chance.zika)
+        eventos_chikungunya.append(cabeca_chance.chikunguinya)
+        eventos_dengue.append(cabeca_intensidade.dengue)
+        eventos_zika.append(cabeca_intensidade.zika)
+        eventos_chikungunya.append(cabeca_intensidade.chikunguinya)
+
+    if coceira:
+        evento = True
+        coceira_intensidade = coceira_dor(intensidade_coceira)
+        eventos_dengue.append(coceira_intensidade.dengue)
+        eventos_zika.append(coceira_intensidade.zika)
+        eventos_chikungunya.append(coceira_intensidade.chikunguinya)
+
+    if hipertrofia_ganglionar:
+        evento = True
+        hipertrofia_intensidade = hipertrofia_dor(intensidade_hipertrofia)
+        eventos_dengue.append(hipertrofia_intensidade.dengue)
+        eventos_zika.append(hipertrofia_intensidade.zika)
+        eventos_chikungunya.append(hipertrofia_intensidade.chikunguinya)
+
+    if discrasia_hemorragica:
+        evento = True
+        discrasia_chance = discrasia_prob()
+        discrasia_intensidade = discrasia_dor(intensidade_discrasia)
+        eventos_dengue.append(discrasia_chance.dengue)
+        eventos_zika.append(discrasia_chance.zika)
+        eventos_chikungunya.append(discrasia_chance.chikunguinya)
+        eventos_dengue.append(discrasia_intensidade.dengue)
+        eventos_zika.append(discrasia_intensidade.zika)
+        eventos_chikungunya.append(discrasia_intensidade.chikunguinya)
+
+    if acomentimento_neurologico:
+        evento = True
+        acometimento_chance = acometimento_prob()
+        eventos_dengue.append(acometimento_chance.dengue)
+        eventos_zika.append(acometimento_chance.zika)
+        eventos_chikungunya.append(acometimento_chance.chikunguinya)
+
+    return evento
 
 
-def trata_febre(grau_febre, tempo_febre):
+# Função que retorna a probabilidade de cada doença dada a temperatura da febre
+def febre_temperatura(grau_febre):
+    if grau_febre < 39:
+        dengue = 0.1
+        chikungunya = 0.1
+        zika = 1
+    else:
+        dengue = 0.6
+        zika = 0.1
+        chikungunya = (grau_febre/3)-(38/3)
+    return Doencas(dengue, zika, chikungunya)
 
-    return 0
+
+# Função que retorna as probabilidades de cada doença dada a duração da febre
+def febre_duracao(tempo_febre):
+    if 0 < tempo_febre <= 2:
+        dengue = tempo_febre / 7
+        zika = tempo_febre / 2
+        chikungunya = tempo_febre / 3
+    elif 2 < tempo_febre <= 3:
+        dengue = tempo_febre / 7
+        zika = 0.1
+        chikungunya = tempo_febre / 3
+    else:
+        dengue = tempo_febre / 7
+        zika = 0.1
+        chikungunya = 0.1
+    return Doencas(dengue, zika, chikungunya)
+
+
+# Função que retorna a probabilidade de cada doença dado o dia de surgimento das manchas
+def mancha_prob(dia_manchas):
+    if dia_manchas <= 2:
+        dengue = 0.3
+        zika = 1
+        chikungunya = 0.5
+    elif 2 < dia_manchas <= 4:
+        dengue = 0.3
+        zika = 0.9
+        chikungunya = 0.5
+    else:
+        dengue = 0.5
+        zika = 0.9
+        chikungunya = 0.5
+    return Doencas(dengue, zika, chikungunya)
+
+
+# Função que retorna probabilidade de cada doença dado o surgimento de dor muscular
+def muscular_prob():
+    dengue = 1
+    zika = 2 / 3
+    chikungunya = 1 / 3
+    return Doencas(dengue, zika, chikungunya)
+
+
+# Função que retorna probabilidade de cada doença dado o surgimento de dor articular
+def articular_prob():
+    dengue = 1 / 3
+    zika = 2 / 3
+    chikungunya = 1
+    return Doencas(dengue, zika, chikungunya)
+
+
+# Função que retorna probabilidade de cada doença dada a intensidade da dor articular
+def articular_dor(intensidade_articulacao):
+    if intensidade_articulacao == 1:
+        dengue = 0.9
+        zika = 0.5
+        chikungunya = 0.1
+    elif intensidade_articulacao == 2:
+        dengue = 0.1
+        zika = 0.5
+        chikungunya = 0.5
+    else:
+        dengue = 0.1
+        zika = 0.1
+        chikungunya = 0.9
+    return Doencas(dengue, zika, chikungunya)
+
+
+# Função que retorna probabilidade de cada doença dado o surgimento de edema
+def edema_prob():
+    dengue = 0.05
+    zika = 0.5
+    chikungunya = 0.5
+    return Doencas(dengue, zika, chikungunya)
+
+
+# Função que retorna probabilidade de cada doença dada a intensidade do edema
+def edema_dor(intensidade_edema):
+    if intensidade_edema == 1:
+        dengue = 0.01
+        zika = 0.8
+        chikungunya = 0.2
+    elif intensidade_edema == 2:
+        dengue = 0.01
+        zika = 0.2
+        chikungunya = 0.8
+    else:
+        dengue = 0.01
+        zika = 0.2
+        chikungunya = 0.8
+    return Doencas(dengue, zika, chikungunya)
+
+
+# Função que retorna probabilidade de cada doença dado o surgimento de conjuntivite
+def conjuntivite_prob():
+    dengue = 0.05
+    zika = 0.7
+    chikungunya = 0.3
+    return Doencas(dengue, zika, chikungunya)
+
+
+# Função que retorna probabilidade de cada doença dado o surgimento de dor de cabeça
+def cabeca_prob():
+    dengue = 1
+    zika = 2 / 3
+    chikungunya = 2 / 3
+    return Doencas(dengue, zika, chikungunya)
+
+
+# Função que retorna probabilidade de cada doença dada a intensidade da dor de cabeça
+def cabeca_dor(intensidade_cabeca):
+    if intensidade_cabeca == 1:
+        dengue = 1 / 3
+        zika = 1 / 3
+        chikungunya = 1 / 3
+    elif intensidade_cabeca == 2:
+        dengue = 0.1
+        zika = 2 / 3
+        chikungunya = 2 / 3
+    else:
+        dengue = 1
+        zika = 0.1
+        chikungunya = 0.1
+    return Doencas(dengue, zika, chikungunya)
+
+
+# Função que retorna probabilidade de cada doença dada a intensidade da coceira
+def coceira_dor(intensidade_coceira):
+    if intensidade_coceira == 1:
+        dengue = 0.9
+        zika = 0.1
+        chikungunya = 0.9
+    elif intensidade_coceira == 2:
+        dengue = 0.1
+        zika = 0.9
+        chikungunya = 0.1
+    else:
+        dengue = 0.1
+        zika = 0.9
+        chikungunya = 0.1
+    return Doencas(dengue, zika, chikungunya)
+
+
+# Função que retorna probabilidade de cada doença dada a intensidade da hipertrofia
+def hipertrofia_dor(intensidade_hipertrofia):
+    if intensidade_hipertrofia == 1:
+        dengue = 0.9
+        zika = 0.1
+        chikungunya = 0.1
+    elif intensidade_hipertrofia == 2:
+        dengue = 0.1
+        zika = 0.1
+        chikungunya = 0.9
+    else:
+        dengue = 0.1
+        zika = 0.9
+        chikungunya = 0.1
+    return Doencas(dengue, zika, chikungunya)
+
+
+# Função que retorna probabilidade de cada doença dado o surgimento de discrasia
+def discrasia_prob():
+    dengue = 0.5
+    zika = 0
+    chikungunya = 0.5
+    return Doencas(dengue, zika, chikungunya)
+
+
+# Função que retorna probabilidade de cada doença dada a intensidade da discrasia
+def discrasia_dor(intensidade_discrasia):
+    if intensidade_discrasia == 1:
+        dengue = 0.1
+        zika = 0
+        chikungunya = 0.9
+    elif intensidade_discrasia == 2:
+        dengue = 0.9
+        zika = 0
+        chikungunya = 0.1
+    else:
+        dengue = 0.5
+        zika = 0
+        chikungunya = 0.5
+    return Doencas(dengue, zika, chikungunya)
+
+
+# Função que retorna probabilidade de cada doença dado o surgimento de acometimento neurológico
+def acometimento_prob():
+    dengue = 0.05
+    zika = 0.15
+    chikungunya = 0.05
+    return Doencas(dengue, zika, chikungunya)
 
 
 def main():
@@ -156,10 +458,8 @@ def main():
 
             # Dor muscular
             dor_muscular = False
-            intensidade_muscular = 0
             if apresentou('dor muscular'):
                 dor_muscular = True
-                intensidade_muscular = intensidade('da dor musuclar')
 
             # Dor nas articulações
             dor_articulacao = False
@@ -215,11 +515,11 @@ def main():
 
             # Resultado
             sistema_especialista(febre, grau_febre, tempo_febre, manchas_pele, dia_manchas, dor_muscular,
-                                     intensidade_muscular, dor_articulacao, intensidade_articulacao,
-                                     edema_articulacao, intensidade_edema, conjuntivite,
-                                     dor_cabeca, intensidade_cabeca, coceira, intensidade_coceira,
-                                     hipertrofia_ganglionar, intensidade_hipertrofia, discrasia_hemorragica,
-                                     intensidade_discrasia, acomentimento_neurologico)
+                                 dor_articulacao, intensidade_articulacao,
+                                 edema_articulacao, intensidade_edema, conjuntivite,
+                                 dor_cabeca, intensidade_cabeca, coceira, intensidade_coceira,
+                                 hipertrofia_ganglionar, intensidade_hipertrofia, discrasia_hemorragica,
+                                 intensidade_discrasia, acomentimento_neurologico)
 
             print('Deseja realizar novo dignóstico?\n[1] Sim     |     [2] Não')
             while 1:
