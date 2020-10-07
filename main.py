@@ -185,17 +185,17 @@ def sistema_especialista(febre, grau_febre, tempo_febre, manchas_pele, dia_manch
 
         if probabilidades.dengue > probabilidades.zika and probabilidades.dengue > probabilidades.chikunguinya:
             print('\n***************************************************************')
-            print('Doença com maior probabilidade: DENGUE' + str(probabilidades.dengue) + str(probabilidades.zika) + str(probabilidades.chikunguinya))
+            print('Doença com maior probabilidade: DENGUE')
             print('***************************************************************\n')
 
         if probabilidades.zika > probabilidades.dengue and probabilidades.zika > probabilidades.chikunguinya:
             print('\n***************************************************************')
-            print('Doença com maior probabilidade: ZIKA' + str(probabilidades.dengue) + str(probabilidades.zika) + str(probabilidades.chikunguinya))
+            print('Doença com maior probabilidade: ZIKA')
             print('***************************************************************\n')
 
         if probabilidades.chikunguinya > probabilidades.zika and probabilidades.chikunguinya > probabilidades.dengue:
             print('\n***************************************************************')
-            print('Doença com maior probabilidade: CHIKUNGUNYA' + str(probabilidades.dengue) + str(probabilidades.zika) + str(probabilidades.chikunguinya))
+            print('Doença com maior probabilidade: CHIKUNGUNYA')
             print('***************************************************************\n')
 
 
