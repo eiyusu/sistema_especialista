@@ -3,7 +3,7 @@
 # Victor Gabriel Rodrigues de Almeida - 140052399
 
 
-#   Sintoma                     |   Dengue      |   Zika             |  Chikunguinya
+#   Sintoma                     |   Dengue      |   Zika             |  chikungunya
 #   Febre                       |   >38ºC       |   <38ºC            |  >38ºC
 #   Duração da Febre            |   4 a 7 dias  |   1 ou 2 dias      |  2 ou 3 dias
 #   Manchas na Pele             |   4º dia      |   1º ou 2º dia     |  2º ao 5º dia
@@ -21,16 +21,17 @@
 #   Acomet. Neuro.              |   Raro        |   Mais que outros  |  Raro (mais em neonatos)
 
 
+# Probabilidades de cada doença individualmente, sem qualquer evidência
 p_dengue = 1/3
 p_zika = 1/3
 p_chikungunya = 1/3
 
 
 class Doencas:
-    def __init__(self, dengue, zika, chikunguinya):
+    def __init__(self, dengue, zika, chikungunya):
         self.dengue = dengue
         self.zika = zika
-        self.chikunguinya = chikunguinya
+        self.chikungunya = chikungunya
 
 
 # Função auxiliar que verifica se uma string pode ser traduzida diretamente para número inteiro
@@ -86,114 +87,114 @@ def sistema_especialista(febre, grau_febre, tempo_febre, manchas_pele, dia_manch
 
     if not febre and not manchas_pele and not dor_muscular and not dor_articulacao and not edema_articulacao and not conjuntivite and not dor_cabeca and not coceira and not hipertrofia_ganglionar and not discrasia_hemorragica and not acomentimento_neurologico:
         doente = False
-        print('\nProvavelmente, você não está com dengue, zika ou chikunguinya\n')
+        print('\nProvavelmente, você não está com dengue, zika ou chikungunya\n')
 
     if not febre and doente:
         febre_chance = febre_prob()
         eventos_dengue.append(febre_chance.dengue)
         eventos_zika.append(febre_chance.zika)
-        eventos_chikungunya.append(febre_chance.chikunguinya)
+        eventos_chikungunya.append(febre_chance.chikungunya)
 
     if febre:
         temperatura = febre_temperatura(grau_febre)
         duracao_febre = febre_duracao(tempo_febre)
         eventos_dengue.append(temperatura.dengue)
         eventos_zika.append(temperatura.zika)
-        eventos_chikungunya.append(temperatura.chikunguinya)
+        eventos_chikungunya.append(temperatura.chikungunya)
         eventos_dengue.append(duracao_febre.dengue)
         eventos_zika.append(duracao_febre.zika)
-        eventos_chikungunya.append(duracao_febre.chikunguinya)
+        eventos_chikungunya.append(duracao_febre.chikungunya)
 
     if manchas_pele:
         mancha_chance = mancha_prob(dia_manchas)
         eventos_dengue.append(mancha_chance.dengue)
         eventos_zika.append(mancha_chance.zika)
-        eventos_chikungunya.append(mancha_chance.chikunguinya)
+        eventos_chikungunya.append(mancha_chance.chikungunya)
 
     if dor_muscular:
         muscular_chance = muscular_prob()
         eventos_dengue.append(muscular_chance.dengue)
         eventos_zika.append(muscular_chance.zika)
-        eventos_chikungunya.append(muscular_chance.chikunguinya)
+        eventos_chikungunya.append(muscular_chance.chikungunya)
 
     if dor_articulacao:
         articulacao_chance = articular_prob()
         articulacao_intensidade = articular_dor(intensidade_articulacao)
         eventos_dengue.append(articulacao_chance.dengue)
         eventos_zika.append(articulacao_chance.zika)
-        eventos_chikungunya.append(articulacao_chance.chikunguinya)
+        eventos_chikungunya.append(articulacao_chance.chikungunya)
         eventos_dengue.append(articulacao_intensidade.dengue)
         eventos_zika.append(articulacao_intensidade.zika)
-        eventos_chikungunya.append(articulacao_intensidade.chikunguinya)
+        eventos_chikungunya.append(articulacao_intensidade.chikungunya)
 
     if edema_articulacao:
         edema_chance = edema_prob()
         edema_intensidade = edema_dor(intensidade_edema)
         eventos_dengue.append(edema_chance.dengue)
         eventos_zika.append(edema_chance.zika)
-        eventos_chikungunya.append(edema_chance.chikunguinya)
+        eventos_chikungunya.append(edema_chance.chikungunya)
         eventos_dengue.append(edema_intensidade.dengue)
         eventos_zika.append(edema_intensidade.zika)
-        eventos_chikungunya.append(edema_intensidade.chikunguinya)
+        eventos_chikungunya.append(edema_intensidade.chikungunya)
 
     if conjuntivite:
         conjuntivite_chance = conjuntivite_prob()
         eventos_dengue.append(conjuntivite_chance.dengue)
         eventos_zika.append(conjuntivite_chance.zika)
-        eventos_chikungunya.append(conjuntivite_chance.chikunguinya)
+        eventos_chikungunya.append(conjuntivite_chance.chikungunya)
 
     if dor_cabeca:
         cabeca_chance = cabeca_prob()
         cabeca_intensidade = cabeca_dor(intensidade_cabeca)
         eventos_dengue.append(cabeca_chance.dengue)
         eventos_zika.append(cabeca_chance.zika)
-        eventos_chikungunya.append(cabeca_chance.chikunguinya)
+        eventos_chikungunya.append(cabeca_chance.chikungunya)
         eventos_dengue.append(cabeca_intensidade.dengue)
         eventos_zika.append(cabeca_intensidade.zika)
-        eventos_chikungunya.append(cabeca_intensidade.chikunguinya)
+        eventos_chikungunya.append(cabeca_intensidade.chikungunya)
 
     if coceira:
         coceira_intensidade = coceira_dor(intensidade_coceira)
         eventos_dengue.append(coceira_intensidade.dengue)
         eventos_zika.append(coceira_intensidade.zika)
-        eventos_chikungunya.append(coceira_intensidade.chikunguinya)
+        eventos_chikungunya.append(coceira_intensidade.chikungunya)
 
     if hipertrofia_ganglionar:
         hipertrofia_intensidade = hipertrofia_dor(intensidade_hipertrofia)
         eventos_dengue.append(hipertrofia_intensidade.dengue)
         eventos_zika.append(hipertrofia_intensidade.zika)
-        eventos_chikungunya.append(hipertrofia_intensidade.chikunguinya)
+        eventos_chikungunya.append(hipertrofia_intensidade.chikungunya)
 
     if discrasia_hemorragica:
         discrasia_chance = discrasia_prob()
         discrasia_intensidade = discrasia_dor(intensidade_discrasia)
         eventos_dengue.append(discrasia_chance.dengue)
         eventos_zika.append(discrasia_chance.zika)
-        eventos_chikungunya.append(discrasia_chance.chikunguinya)
+        eventos_chikungunya.append(discrasia_chance.chikungunya)
         eventos_dengue.append(discrasia_intensidade.dengue)
         eventos_zika.append(discrasia_intensidade.zika)
-        eventos_chikungunya.append(discrasia_intensidade.chikunguinya)
+        eventos_chikungunya.append(discrasia_intensidade.chikungunya)
 
     if acomentimento_neurologico:
         acometimento_chance = acometimento_prob()
         eventos_dengue.append(acometimento_chance.dengue)
         eventos_zika.append(acometimento_chance.zika)
-        eventos_chikungunya.append(acometimento_chance.chikunguinya)
+        eventos_chikungunya.append(acometimento_chance.chikungunya)
 
     if len(eventos_dengue) > 0 and len(eventos_zika) > 0 and len(eventos_chikungunya) > 0:
         probabilidades = bayesiano(eventos_dengue, eventos_zika, eventos_chikungunya)
 
-        if probabilidades.dengue > probabilidades.zika and probabilidades.dengue > probabilidades.chikunguinya:
+        if probabilidades.dengue > probabilidades.zika and probabilidades.dengue > probabilidades.chikungunya:
             print('\n***************************************************************')
             print('Doença com maior probabilidade: DENGUE')
             print('***************************************************************\n')
 
-        if probabilidades.zika > probabilidades.dengue and probabilidades.zika > probabilidades.chikunguinya:
+        if probabilidades.zika > probabilidades.dengue and probabilidades.zika > probabilidades.chikungunya:
             print('\n***************************************************************')
             print('Doença com maior probabilidade: ZIKA')
             print('***************************************************************\n')
 
-        if probabilidades.chikunguinya > probabilidades.zika and probabilidades.chikunguinya > probabilidades.dengue:
+        if probabilidades.chikungunya > probabilidades.zika and probabilidades.chikungunya > probabilidades.dengue:
             print('\n***************************************************************')
             print('Doença com maior probabilidade: CHIKUNGUNYA')
             print('***************************************************************\n')
@@ -432,7 +433,7 @@ def acometimento_prob():
 
 
 def main():
-    print("\nSistema de Diagnósticos de Doenças - Dengue | Zika | Chikunguinya\n")
+    print("\nSistema de Diagnósticos de Doenças - Dengue | Zika | Chikungunya\n")
 
     # Loop principal com requisição das informações necessárias
     print('[1] Diagnosticar\n[2] Sair')
