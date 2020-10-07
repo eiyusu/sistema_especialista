@@ -185,17 +185,17 @@ def sistema_especialista(febre, grau_febre, tempo_febre, manchas_pele, dia_manch
 
         if probabilidades.dengue > probabilidades.zika and probabilidades.dengue > probabilidades.chikunguinya:
             print('\n***************************************************************')
-            print('Doença com maior probabilidade: DENGUE')
+            print('Doença com maior probabilidade: DENGUE' + str(probabilidades.dengue) + str(probabilidades.zika) + str(probabilidades.chikunguinya))
             print('***************************************************************\n')
 
         if probabilidades.zika > probabilidades.dengue and probabilidades.zika > probabilidades.chikunguinya:
             print('\n***************************************************************')
-            print('Doença com maior probabilidade: ZIKA')
+            print('Doença com maior probabilidade: ZIKA' + str(probabilidades.dengue) + str(probabilidades.zika) + str(probabilidades.chikunguinya))
             print('***************************************************************\n')
 
         if probabilidades.chikunguinya > probabilidades.zika and probabilidades.chikunguinya > probabilidades.dengue:
             print('\n***************************************************************')
-            print('Doença com maior probabilidade: CHIKUNGUNYA')
+            print('Doença com maior probabilidade: CHIKUNGUNYA' + str(probabilidades.dengue) + str(probabilidades.zika) + str(probabilidades.chikunguinya))
             print('***************************************************************\n')
 
 
@@ -231,11 +231,11 @@ def febre_temperatura(grau_febre):
     if grau_febre < 39:
         dengue = 0.1
         chikungunya = 0.1
-        zika = 1
+        zika = 0.9
     else:
         dengue = 0.6
         zika = 0.1
-        chikungunya = (grau_febre/3)-(38/3)
+        chikungunya = (grau_febre*0.3)-11.3
     return Doencas(dengue, zika, chikungunya)
 
 
@@ -264,7 +264,7 @@ def mancha_prob(dia_manchas):
         chikungunya = 0.5
     elif 2 < dia_manchas <= 4:
         dengue = 0.3
-        zika = 0.9
+        zika = 0.8
         chikungunya = 0.5
     else:
         dengue = 0.5
