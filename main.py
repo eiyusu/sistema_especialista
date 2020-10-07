@@ -231,7 +231,7 @@ def febre_temperatura(grau_febre):
     if grau_febre < 39:
         dengue = 0.1
         chikungunya = 0.1
-        zika = 0.9
+        zika = 1
     else:
         dengue = 0.6
         zika = 0.1
@@ -264,7 +264,7 @@ def mancha_prob(dia_manchas):
         chikungunya = 0.5
     elif 2 < dia_manchas <= 4:
         dengue = 0.3
-        zika = 0.8
+        zika = 0.9
         chikungunya = 0.5
     else:
         dengue = 0.5
