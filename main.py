@@ -82,13 +82,19 @@ def sistema_especialista(febre, grau_febre, tempo_febre, manchas_pele, dia_manch
     eventos_dengue = []
     eventos_zika = []
     eventos_chikungunya = []
-    evento = False
+    doente = True
 
     if not febre and not manchas_pele and not dor_muscular and not dor_articulacao and not edema_articulacao and not conjuntivite and not dor_cabeca and not coceira and not hipertrofia_ganglionar and not discrasia_hemorragica and not acomentimento_neurologico:
+        doente = False
         print('\nProvavelmente, você não está com dengue, zika ou chikunguinya\n')
 
+    if not febre and doente:
+        febre_chance = febre_prob()
+        eventos_dengue.append(febre_chance.dengue)
+        eventos_zika.append(febre_chance.zika)
+        eventos_chikungunya.append(febre_chance.chikunguinya)
+
     if febre:
-        evento = True
         temperatura = febre_temperatura(grau_febre)
         duracao_febre = febre_duracao(tempo_febre)
         eventos_dengue.append(temperatura.dengue)
@@ -99,21 +105,18 @@ def sistema_especialista(febre, grau_febre, tempo_febre, manchas_pele, dia_manch
         eventos_chikungunya.append(duracao_febre.chikunguinya)
 
     if manchas_pele:
-        evento = True
         mancha_chance = mancha_prob(dia_manchas)
         eventos_dengue.append(mancha_chance.dengue)
         eventos_zika.append(mancha_chance.zika)
         eventos_chikungunya.append(mancha_chance.chikunguinya)
 
     if dor_muscular:
-        evento = True
         muscular_chance = muscular_prob()
         eventos_dengue.append(muscular_chance.dengue)
         eventos_zika.append(muscular_chance.zika)
         eventos_chikungunya.append(muscular_chance.chikunguinya)
 
     if dor_articulacao:
-        evento = True
         articulacao_chance = articular_prob()
         articulacao_intensidade = articular_dor(intensidade_articulacao)
         eventos_dengue.append(articulacao_chance.dengue)
@@ -124,7 +127,6 @@ def sistema_especialista(febre, grau_febre, tempo_febre, manchas_pele, dia_manch
         eventos_chikungunya.append(articulacao_intensidade.chikunguinya)
 
     if edema_articulacao:
-        evento = True
         edema_chance = edema_prob()
         edema_intensidade = edema_dor(intensidade_edema)
         eventos_dengue.append(edema_chance.dengue)
@@ -135,14 +137,12 @@ def sistema_especialista(febre, grau_febre, tempo_febre, manchas_pele, dia_manch
         eventos_chikungunya.append(edema_intensidade.chikunguinya)
 
     if conjuntivite:
-        evento = True
         conjuntivite_chance = conjuntivite_prob()
         eventos_dengue.append(conjuntivite_chance.dengue)
         eventos_zika.append(conjuntivite_chance.zika)
         eventos_chikungunya.append(conjuntivite_chance.chikunguinya)
 
     if dor_cabeca:
-        evento = True
         cabeca_chance = cabeca_prob()
         cabeca_intensidade = cabeca_dor(intensidade_cabeca)
         eventos_dengue.append(cabeca_chance.dengue)
@@ -153,21 +153,18 @@ def sistema_especialista(febre, grau_febre, tempo_febre, manchas_pele, dia_manch
         eventos_chikungunya.append(cabeca_intensidade.chikunguinya)
 
     if coceira:
-        evento = True
         coceira_intensidade = coceira_dor(intensidade_coceira)
         eventos_dengue.append(coceira_intensidade.dengue)
         eventos_zika.append(coceira_intensidade.zika)
         eventos_chikungunya.append(coceira_intensidade.chikunguinya)
 
     if hipertrofia_ganglionar:
-        evento = True
         hipertrofia_intensidade = hipertrofia_dor(intensidade_hipertrofia)
         eventos_dengue.append(hipertrofia_intensidade.dengue)
         eventos_zika.append(hipertrofia_intensidade.zika)
         eventos_chikungunya.append(hipertrofia_intensidade.chikunguinya)
 
     if discrasia_hemorragica:
-        evento = True
         discrasia_chance = discrasia_prob()
         discrasia_intensidade = discrasia_dor(intensidade_discrasia)
         eventos_dengue.append(discrasia_chance.dengue)
@@ -178,13 +175,55 @@ def sistema_especialista(febre, grau_febre, tempo_febre, manchas_pele, dia_manch
         eventos_chikungunya.append(discrasia_intensidade.chikunguinya)
 
     if acomentimento_neurologico:
-        evento = True
         acometimento_chance = acometimento_prob()
         eventos_dengue.append(acometimento_chance.dengue)
         eventos_zika.append(acometimento_chance.zika)
         eventos_chikungunya.append(acometimento_chance.chikunguinya)
 
-    return evento
+    if len(eventos_dengue) > 0 and len(eventos_zika) > 0 and len(eventos_chikungunya) > 0:
+        probabilidades = bayesiano(eventos_dengue, eventos_zika, eventos_chikungunya)
+
+        if probabilidades.dengue > probabilidades.zika and probabilidades.dengue > probabilidades.chikunguinya:
+            print('\n***************************************************************')
+            print('Doença com maior probabilidade: DENGUE')
+            print('***************************************************************\n')
+
+        if probabilidades.zika > probabilidades.dengue and probabilidades.zika > probabilidades.chikunguinya:
+            print('\n***************************************************************')
+            print('Doença com maior probabilidade: ZIKA')
+            print('***************************************************************\n')
+
+        if probabilidades.chikunguinya > probabilidades.zika and probabilidades.chikunguinya > probabilidades.dengue:
+            print('\n***************************************************************')
+            print('Doença com maior probabilidade: CHIKUNGUNYA')
+            print('***************************************************************\n')
+
+
+# Função de cálculo das probs Bayesianas
+def bayesiano(eventos_dengue, eventos_zika, eventos_chikungunya):
+    numerador_dengue = p_dengue
+    numerador_zika = p_zika
+    numerador_chikungunya = p_chikungunya
+
+    for i in range(0, len(eventos_dengue)):
+        numerador_dengue = numerador_dengue * eventos_dengue[i]
+        numerador_zika = numerador_zika * eventos_zika[i]
+        numerador_chikungunya = numerador_chikungunya * eventos_chikungunya[i]
+
+    denominador = numerador_dengue + numerador_zika + numerador_chikungunya
+    dengue = numerador_dengue/denominador
+    zika = numerador_zika/denominador
+    chikungunya = numerador_chikungunya/denominador
+
+    return Doencas(dengue, zika, chikungunya)
+
+
+# Função que retorna a probabilidade de cada doença dada a presença ou não de febre
+def febre_prob():
+    dengue = 0.05
+    zika = 0.5
+    chikungunya = 0.05
+    return Doencas(dengue, zika, chikungunya)
 
 
 # Função que retorna a probabilidade de cada doença dada a temperatura da febre
@@ -213,7 +252,7 @@ def febre_duracao(tempo_febre):
     else:
         dengue = tempo_febre / 7
         zika = 0.1
-        chikungunya = 0.1
+        chikungunya = 0.3
     return Doencas(dengue, zika, chikungunya)
 
 
@@ -410,7 +449,7 @@ def main():
             if apresentou('febre'):
                 febre = True
                 # Loop para ver a temperatura
-                a = "Quantos graus celcius de febre você aprensentou?"
+                a = "Quantos graus celcius de febre você aprensentou? Digite valor inteiro [36 a 41]"
                 b = " Escreva apenas números da maior temperatura medida"
                 print(a + b)
                 while 1:
@@ -425,15 +464,15 @@ def main():
                         print("Tente novamente, apenas números inteiros são aceitos")
 
                 # Loop para ver a duração da febre
-                print("Por quantos dias a febre persistiu? - Digite apenas o número de dias")
+                print("Por quantos dias a febre persistiu? - Digite apenas o número de dias [1 a 7]")
                 while 1:
                     entrada = input()
                     if is_int(entrada):
-                        if 0 < int(entrada) < 30:
+                        if 0 < int(entrada) < 8:
                             tempo_febre = int(entrada)
                             break
                         else:
-                            print("Números de dias incompatível com o esperado, escreva novamente (1 a 30 dias)")
+                            print("Números de dias incompatível com o esperado, escreva novamente (1 a 7 dias)")
                     else:
                         print("Tente novamente, apenas números inteiros são aceitos")
 
@@ -444,15 +483,15 @@ def main():
                 manchas_pele = True
 
                 # Loop para saber o dia em que as manchas surgiram
-                print("A partir de qual dia as manchas apareceram? Digite apenas um valor inteiro")
+                print("A partir de qual dia as manchas apareceram? Digite apenas um valor inteiro [1 a 5]")
                 while 1:
                     entrada = input()
                     if is_int(entrada):
-                        if 0 < int(entrada) < 30:
+                        if 0 < int(entrada) < 6:
                             dia_manchas = int(entrada)
                             break
                         else:
-                            print("Dia de início do sintoma fora do esperado, escreva novamente (1º ao 30º dia)")
+                            print("Dia de início do sintoma fora do esperado, escreva novamente (1º ao 5º dia)")
                     else:
                         print("Tente novamente, apenas números inteiros são aceitos")
 
